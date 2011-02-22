@@ -43,6 +43,24 @@
 	#include "../ethersex/hardware/lcd/hr20.h"
 #endif
 
+#if defined (__AVR_ATmega168__)
+#define TIMSK TIMSK1
+#define UBRRH UBRR0H
+#define UBRRL UBRR0L
+#define UCSRC UCSR0C
+#define UCSZ0 UCSZ00
+#define UCSZ1 UCSZ01
+#define UCSRB UCSR0B
+#define UCSRA UCSR0A
+#define TXEN TXEN0
+#define RXEN RXEN0
+#define RXC RXC0
+#define TXC TXC0
+#define DOR DOR0
+#define FE FE0
+#define UDR UDR0
+#endif
+
 #if defined (__AVR_ATmega169__)
 #define TIMSK TIMSK1
 #endif

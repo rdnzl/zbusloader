@@ -5,11 +5,14 @@ SIZE=avr-size
 AVRDUDE=avrdude
 
 F_CPU=8000000
-MCU=atmega8
+#MCU=atmega8
+MCU=atmega168
 #MCU=atmega169
 
 ifeq ($(MCU),atmega8)
 BOOTSTART=0x1E00         # 256 word
+else ifeq ($(MCU),atmega168)
+BOOTSTART=0x3C00         # 512 word
 else ifeq ($(MCU),atmega169)
 BOOTSTART=0x3C00         # 512 word
 endif
