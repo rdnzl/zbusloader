@@ -19,15 +19,16 @@
 #ifndef PINCONFIG_H
 #define PINCONFIG_H
 
-#define ZBUS_TX_DDR DDRE
-#define ZBUS_TX_PORT PORTE
-#define ZBUS_TX_PIN 4
+#define ZBUS_TX_DDR DDRB
+#define ZBUS_TX_PORT PORTB
+#define ZBUS_TX_PIN 0
+
 
 /* If you don't want to have status LEDs, simply comment out these */
-//#define STATUS_LED_PORT   PORTB
-//#define STATUS_LED_DDR    DDRB
-//#define STATUS_LED_TX     PB6
-//#define STATUS_LED_RX     PB7
+#define STATUS_LED_PORT   PORTC
+#define STATUS_LED_DDR    DDRC
+#define STATUS_LED_TX     PC5
+#define STATUS_LED_RX     PC5
 
 #endif
 

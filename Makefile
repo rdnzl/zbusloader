@@ -4,12 +4,19 @@ STRIP=avr-strip
 SIZE=avr-size
 AVRDUDE=avrdude
 
-#CPPFLAGS += -mmcu=atmega8 -DF_CPU=8000000UL 
-#CFLAGS += -std=gnu99 -Os -g -Wall -W
-#LDFLAGS += $(CFLAGS) -nostdlib -Wl,--section-start=.text=0x1E00
-CPPFLAGS += -mmcu=atmega169 -DF_CPU=8000000UL 
-CFLAGS += -std=gnu99 -Os -g -Wall -W -mmcu=atmega169
-LDFLAGS += $(CFLAGS) -nostdlib -Wl,--section-start=.text=0x3C00
+F_CPU=8000000
+MCU=atmega8
+#MCU=atmega169
+
+ifeq ($(MCU),atmega8)
+BOOTSTART=0x1E00         # 256 word
+else ifeq ($(MCU),atmega169)
+BOOTSTART=0x3C00         # 512 word
+endif
+
+CPPFLAGS += -mmcu=$(MCU) -DF_CPU=$(F_CPU)
+CFLAGS += -std=gnu99 -Os -g -Wall -W -mmcu=$(MCU)
+LDFLAGS += $(CFLAGS) -nostdlib -Wl,--section-start=.text=$(BOOTSTART)
 
 
 all: zbusloader.hex

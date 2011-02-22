@@ -32,11 +32,19 @@
 
 #include "pinconfig.h"
 
-#define HR20
+#define BAUD 38400UL
+#define UBRRVAL (F_CPU/16/BAUD-1)
+
+#undef HR20
+#undef UART_XXX
 
 #ifdef HR20
 	#include "../ethersex/pinning.c"
 	#include "../ethersex/hardware/lcd/hr20.h"
+#endif
+
+#if defined (__AVR_ATmega169__)
+#define TIMSK TIMSK1
 #endif
 
 #define noinline __attribute__((noinline))
@@ -63,19 +71,15 @@ timer_init (void)
   TCCR1B = _BV (CS12);		// TCCR1B(CS12) = 1
 
   /* enable overflow interrupt of Timer 1 */
-#ifdef HR20
-  TIMSK1 = _BV (TOIE1);		// TIMSK1(TOIE1) = 1
-#else
   TIMSK = _BV (TOIE1);		// TIMSK(TOIE1) = 1
-#endif
 
   sei ();
 }
 
-#define USE_2
+#ifdef UART_XXX
+#define USE_2 // ???
 
 static void uart_xxx(void) {
-	#define BAUD 76800
 	#include <util/setbaud.h>
 	UBRRH = UBRRH_VALUE;
 	UBRRL = UBRRL_VALUE;
@@ -85,23 +89,32 @@ static void uart_xxx(void) {
 		UCSRA &= ~(1 << U2X);
 	#endif
 }
+#endif
 
 void
 zbus_init(void)
 {
     /* set baud rate */
-    //UBRRH = ZBUS_UBRR >> 8;
-    //UBRRL = ZBUS_UBRR;
+#ifdef UART_XXX
     uart_xxx();
+#else
+    UBRRH = (unsigned char) UBRRVAL >> 8;
+    UBRRL = (unsigned char) UBRRVAL;
+#endif
+
+    //  UCSRA |= (2 << U2X);
 
     ZBUS_TX_DDR |= _BV(ZBUS_TX_PIN);
     ZBUS_TX_PORT &= ~_BV(ZBUS_TX_PIN);
     /* set mode: 8 bits, 1 stop, no parity, asynchronous usart
        and Set URSEL so we write UCSRC and not UBRRH */
-    //UCSRC = _BV(UCSZ0) | _BV(UCSZ1) | _BV(URSEL);
+#if defined (__AVR_ATmega8__)
+    UCSRC = _BV(UCSZ0) | _BV(UCSZ1) | _BV(URSEL);
+#else
     UCSRC = _BV(UCSZ0) | _BV(UCSZ1);
+#endif
     /* Enable the RX interrupt and receiver and transmitter */
-    UCSRB |= _BV(TXEN) | _BV(RXEN); 
+    UCSRB |= _BV(TXEN) | _BV(RXEN);
 
 }
 
